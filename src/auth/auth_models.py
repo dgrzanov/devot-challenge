@@ -1,4 +1,5 @@
-from sqlmodel import Field, Relationship, SQLModel
+from typing import Optional
+from sqlmodel import Field, SQLModel
 
 
 class UserBase(SQLModel):
@@ -9,6 +10,12 @@ class UserBase(SQLModel):
 
 class UserCreate(UserBase):
     password: str = Field(min_length=8)
+
+
+class UserRegister(SQLModel):
+    username: str = Field(max_length=255)
+    password: str = Field(min_length=8, max_length=40)
+    full_name: str | None = Field(default=None, max_length=255)
 
 
 class Token(SQLModel):
@@ -22,5 +29,5 @@ class TokenPayload(SQLModel):
 
 # DATABASE MODELS
 class User(UserBase, table=True):
-    id: int = Field(primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     hashed_password: str
