@@ -8,7 +8,7 @@ from categories.categories_models import Category
 
 # base model
 class ExpenseBase(SQLModel):
-    date: Optional[datetime] = Field(default_factory=datetime.now)
+    date: datetime = Field(default_factory=datetime.now)
     amount: float = Field(..., gt=0)
     description: Optional[str] = None
 
