@@ -4,6 +4,7 @@ from config import settings
 
 from auth.auth_models import User
 from categories.categories_models import Category
+from expenses.expenses_models import Expense
 
 engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI), echo=True)
 

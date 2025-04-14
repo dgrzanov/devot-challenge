@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class UserBase(SQLModel):
@@ -18,6 +18,10 @@ class UserRegister(SQLModel):
     full_name: str | None = Field(default=None, max_length=255)
 
 
+class UserPublic(UserBase):
+    id: int
+
+
 class Token(SQLModel):
     access_token: str
     token_type: str = "bearer"
@@ -31,3 +35,4 @@ class TokenPayload(SQLModel):
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     hashed_password: str
+    expenses: list["Expense"] = Relationship(back_populates="user")

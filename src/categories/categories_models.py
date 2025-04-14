@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 
 # base model
@@ -31,3 +31,4 @@ class CategoriesPublic(SQLModel):
 # DATABASE MODELS
 class Category(CategoryBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    expenses: list["Expense"] = Relationship(back_populates="category")
