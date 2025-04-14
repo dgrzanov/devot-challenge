@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -7,6 +8,7 @@ from categories.categories_models import Category
 
 # base model
 class ExpenseBase(SQLModel):
+    date: Optional[datetime] = Field(default_factory=datetime.now)
     amount: float = Field(..., gt=0)
     description: Optional[str] = None
 

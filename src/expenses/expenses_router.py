@@ -1,6 +1,7 @@
-from typing import Any
+from datetime import date
+from typing import Any, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from sqlmodel import func, select
 
 from deps import CurrentUser, SessionDep
@@ -18,24 +19,36 @@ router = APIRouter(tags=["expenses"])
 
 @router.get("/", response_model=ExpensesPublic)
 def get_all_expenses(
-    session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100
+    session: SessionDep,
+    current_user: CurrentUser,
+    skip: int = 0,
+    limit: int = 100,
+    category: Optional[int] = Query(None),
+    min_amount: Optional[float] = Query(None),
+    max_amount: Optional[float] = Query(None),
+    start_date: Optional[date] = Query(None),
+    end_date: Optional[date] = Query(None),
 ) -> Any:
     """
     Get expenses.
     """
 
-    count_statement = (
-        select(func.count())
-        .select_from(Expense)
-        .where(Expense.user_id == current_user.id)
-    )
+    filters = [Expense.user_id == current_user.id]
+
+    if category:
+        filters.append(Expense.category_id == category)
+    if min_amount:
+        filters.append(Expense.amount >= min_amount)
+    if max_amount:
+        filters.append(Expense.amount <= max_amount)
+    if start_date:
+        filters.append(Expense.date >= start_date)
+    if end_date:
+        filters.append(Expense.date <= end_date)
+
+    count_statement = select(func.count()).select_from(Expense).where(*filters)
     count = session.exec(count_statement).one()
-    statement = (
-        select(Expense)
-        .where(Expense.user_id == current_user.id)
-        .offset(skip)
-        .limit(limit)
-    )
+    statement = select(Expense).where(*filters).offset(skip).limit(limit)
     expenses = session.exec(statement).all()
 
     return ExpensesPublic(data=expenses, count=count)
