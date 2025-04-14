@@ -13,11 +13,6 @@ from deps import CurrentUser, SessionDep
 router = APIRouter(tags=["auth"])
 
 
-@router.get("/")
-async def test(session: SessionDep, current_user: CurrentUser):
-    return {"message": "Authenticated!", "user": current_user}
-
-
 @router.post("/login")
 def login(
     session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
