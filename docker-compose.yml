@@ -11,3 +11,16 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+  backend:
+    container_name: devot-backend
+    image: backend:latest
+    env_file: 
+      - .env
+    environment:
+      - POSTGRES_SERVER=${POSTGRES_SERVER?Variable not set}
+    build: 
+      context: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
